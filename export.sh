@@ -10,7 +10,7 @@ if [ "$1" == "local" ]; then
 	export CROSS_COMPILE=/home/savoca/Documents/GoogleGCC/arm-eabi-4.7/bin/arm-eabi-
 else
 	echo "Remote Build"
-	build=/home/savoca/downloads/furnace/condor
+	build=/home/savoca/downloads/furnace/titan
 	export CROSS_COMPILE=/home/savoca/storage/toolchains/arm-eabi-4.7/bin/arm-eabi-
 fi
 kernel="furnace"
