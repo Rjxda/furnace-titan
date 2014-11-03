@@ -886,7 +886,7 @@ static int mdss_mdp_overlay_start(struct msm_fb_data_type *mfd)
 			rc = mdss_iommu_ctrl(1);
 			if (IS_ERR_VALUE(rc)) {
 				pr_err("iommu attach failed rc=%d\n", rc);
-				goto ctl_error;
+				goto pm_error;
 			}
 			mdss_hw_init(mdss_res);
 			mdss_iommu_ctrl(0);
@@ -964,6 +964,7 @@ static int mdss_mdp_overlay_start(struct msm_fb_data_type *mfd)
 ctl_error:
 	mdss_mdp_ctl_destroy(ctl);
 	mdp5_data->ctl = NULL;
+pm_error:
 	mdss_mdp_footswitch_ctrl(mdata, false);
 end:
 	return rc;
