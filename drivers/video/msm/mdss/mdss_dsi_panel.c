@@ -27,7 +27,6 @@
 
 #include <linux/gpio.h>
 #include <linux/interrupt.h>
-#include <mach/mmi_panel_notifier.h>
 
 #include "mdss_dsi.h"
 #include "mdss_fb.h"
@@ -639,13 +638,18 @@ end:
 
 static int mdss_dsi_panel_cont_splash_on(struct mdss_panel_data *pdata)
 {
+	struct msm_fb_data_type *mfd;
+
+	mfd = pdata->mfd;
+
 	mdss_dsi_panel_regulator_on(pdata, 1);
 
 	if (pdata->panel_info.type == MIPI_VIDEO_PANEL &&
 		pdata->panel_info.no_solid_fill)
 		mdss_dsi_sw_reset(pdata);
 
-	mmi_panel_notify(MMI_PANEL_EVENT_DISPLAY_ON, NULL);
+	if (!mfd->splash_logo_enabled)
+		mmi_panel_notify(MMI_PANEL_EVENT_DISPLAY_ON, NULL);
 
 #ifndef CONFIG_FB_MSM_MDSS_MDP3
 	if (pdata->panel_info.hs_cmds_post_init)

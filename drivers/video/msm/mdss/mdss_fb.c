@@ -1451,6 +1451,7 @@ static int mdss_fb_open(struct fb_info *info, struct file *file, int user)
 	if (mfd->splash_thread && mfd->ref_cnt > 1) {
 		kthread_stop(mfd->splash_thread);
 		mfd->splash_thread = NULL;
+		mmi_panel_notify(MMI_PANEL_EVENT_DISPLAY_ON, NULL);
 	}
 
 	return 0;

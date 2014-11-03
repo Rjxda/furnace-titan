@@ -20,6 +20,8 @@
 #include <linux/types.h>
 #include <linux/notifier.h>
 
+#include <mach/mmi_panel_notifier.h>
+
 #include "mdss_panel.h"
 
 #define MSM_FB_DEFAULT_PAGE_SIZE 2
