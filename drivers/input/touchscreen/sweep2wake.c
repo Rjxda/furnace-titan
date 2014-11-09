@@ -84,15 +84,13 @@ MODULE_LICENSE("GPLv2");
 #define S2W_Y_LIMIT				S2W_Y_MAX-100
 #define S2W_X_FINAL				160
 
-/* Right -> Left */
-#define S2W_X_B0				430
-#define S2W_X_B1				S2W_X_B0-300
-#define S2W_X_B2				S2W_X_B0-70
+#define S2W_X_B0				170
+#define S2W_X_B1				270
+#define S2W_X_B2				470
 
-/* Left -> Right */
-#define S2W_X_B3				S2W_X_B0+60
-#define S2W_X_B4				S2W_X_MAX-145
-#define S2W_X_B5				S2W_X_MAX-S2W_X_B0
+#define S2W_X_B3				250
+#define S2W_X_B4				450
+#define S2W_X_B5				550
 #endif
 
 /* Resources */
