@@ -813,6 +813,11 @@ static int mdss_dsi_panel_on(struct mdss_panel_data *pdata)
 	if (!mfd->quickdraw_in_progress)
 		mmi_panel_notify(MMI_PANEL_EVENT_DISPLAY_ON, NULL);
 
+	if (ctrl->hbm_panel_off) {
+		ctrl->set_hbm(ctrl, 1);
+		ctrl->hbm_panel_off = false;
+	}
+
 	mdss_dsi_get_pwr_mode(pdata, &pwr_mode);
 	/* validate screen is actually on */
 	if ((pwr_mode & 0x04) != 0x04) {
@@ -878,8 +883,10 @@ static int mdss_dsi_panel_off(struct mdss_panel_data *pdata)
 	if (ctrl->panel_config.bare_board == true)
 		goto disable_regs;
 
-	if (ctrl->set_hbm)
+	if (ctrl->panel_data.panel_info.hbm_state == 1) {
 		ctrl->set_hbm(ctrl, 0);
+		ctrl->hbm_panel_off = true;
+	}
 
 	if (mfd->quickdraw_in_progress)
 		pr_debug("%s: in quickdraw, SH wants the panel SLEEP OUT\n",
@@ -2107,6 +2114,7 @@ int mdss_dsi_panel_init(struct device_node *node,
 				!ctrl_pdata->panel_config.esd_enable;
 	ctrl_pdata->check_status = mdss_panel_check_status;
 	ctrl_pdata->set_hbm = mdss_dsi_panel_set_hbm;
+	ctrl_pdata->hbm_panel_off = false;
 	ctrl_pdata->set_cabc = mdss_dsi_panel_set_cabc;
 
 	return 0;

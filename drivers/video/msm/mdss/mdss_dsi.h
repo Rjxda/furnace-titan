@@ -271,6 +271,7 @@ struct mdss_dsi_ctrl_pdata {
 	int (*get_dt_vreg_data) (struct device *dev,
 			struct dss_module_power *mp, struct device_node *node);
 	int (*set_hbm)(struct mdss_dsi_ctrl_pdata *ctrl, int state);
+	bool hbm_panel_off;
 	int (*set_cabc)(struct mdss_dsi_ctrl_pdata *ctrl, int mode);
 	struct mdss_panel_data panel_data;
 	struct mdss_panel_config panel_config;
