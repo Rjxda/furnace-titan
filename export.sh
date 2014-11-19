@@ -40,7 +40,7 @@ rm -rf out
 mkdir out
 mkdir out/tmp
 echo "Checking for build..."
-if [ -f ozip/kernel/zImage ]; then
+if [ -f ozip/boot.img ]; then
 	read -p "Previous build found, clean working directory..(y/n)? : " cchoice
 	case "$cchoice" in
 		y|Y )
