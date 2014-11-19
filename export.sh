@@ -14,19 +14,23 @@ else
 	export CROSS_COMPILE=/home/savoca/storage/toolchains/arm-eabi-4.7/bin/arm-eabi-
 fi
 kernel="furnace"
-version="1.1.0"
+version="1.1.2"
 rom="stock"
 variant="titan"
 config="furnace_defconfig"
 kerneltype="zImage"
 jobcount="-j$(grep -c ^processor /proc/cpuinfo)"
+ps=2048
+base_offset=0x00000000
+ramdisk_offset=0x01000000
+tags_offset=0x00000100
+cmdline="console=ttyHSL0,115200,n8 androidboot.console=ttyHSL0 androidboot.hardware=qcom user_debug=31 msm_rtb.filter=0x37 vmalloc=400M utags.blkdev=/dev/block/platform/msm_sdcc.1/by-name/utags"
 
 function cleanme {
 	if [ -f arch/arm/boot/"$kerneltype" ]; then
 		echo "  CLEAN   ozip"
 	fi
-	rm -rf ozip/kernel/zImage
-	rm -rf ozip/kernel/dt.img
+	rm -rf ozip/boot.img
 	rm -rf arch/arm/boot/"$kerneltype"
 	make clean && make mrproper
 	echo "Working directory cleaned..."
@@ -60,10 +64,7 @@ if [ -f ozip/kernel/zImage ]; then
 fi
 echo "Extracting files..."
 if [ -f arch/arm/boot/"$kerneltype" ]; then
-	cp arch/arm/boot/"$kerneltype" ozip/kernel/
-	rm -rf ozip/system
-	mkdir -p ozip/system/etc
-	cp scripts/furnace/install-recovery-2.sh ozip/system/etc/
+	cp arch/arm/boot/"$kerneltype" out/"$kerneltype"
 else
 	echo "Nothing has been made..."
 	read -p "Clean working directory..(y/n)? : " achoice
@@ -90,10 +91,22 @@ fi
 
 echo "Making dt.img..."
 if [ -f arch/arm/boot/"$kerneltype" ]; then
-	dtbToolCM -o ozip/kernel/dt.img -s 2048 -p scripts/dtc/ arch/arm/boot/
+	dtbToolCM -o out/dt.img -s 2048 -p scripts/dtc/ arch/arm/boot/
 	echo "dt.img created"
 else
 	echo "No build found..."
+	exit 0;
+fi
+
+echo "Making boot.img..."
+if [ -f out/"$kerneltype" ]; then
+	mkbootimg --kernel out/"$kerneltype" --ramdisk resources/initramfs.img --cmdline "$cmdline" --pagesize $ps --base $base_offset --ramdisk_offset $ramdisk_offset --tags_offset $tags_offset --dt out/dt.img --output ozip/boot.img
+	if [ -z ozip/boot.img ]; then
+		echo "mkbootimg failed..."
+		exit 0;
+	fi
+else
+	echo "No $kerneltype found..."
 	exit 0;
 fi
 
@@ -103,7 +116,7 @@ if [ -f arch/arm/boot/"$kerneltype" ]; then
 	zip -r ../"$kernel"-$version-"$rom"_"$variant".zip .
 	mv ../"$kernel"-$version-"$rom"_"$variant".zip $build
 	cd ..
-	rm -rf out ozip/system
+	rm -rf out
 	echo "Done..."
 	echo "Output zip: $build/$kernel-$version-$(echo $rom)_$variant.zip"
 	exit 0;
